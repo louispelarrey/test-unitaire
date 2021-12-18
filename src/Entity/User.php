@@ -8,7 +8,6 @@ class User {
     public $firstName;
     //'1970-02-01'
     public $birthDate;
-    public $emailChecker;
 
     public function __construct($email, $lastName, $firstName, $birthDate)
     {

@@ -16,7 +16,7 @@ class UserTest extends TestCase {
             "louispelarrey@gmail.com",
             "Pelarrey",
             "Louis",
-            date("Y-m-d")
+            date("Y-m-d", strtotime('-13 years'))
         );
         $this->assertTrue($user->isValid());
     }
