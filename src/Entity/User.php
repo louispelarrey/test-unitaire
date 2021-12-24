@@ -2,24 +2,33 @@
 
 namespace App\Entity;
 
-class User {
-    public $email;
-    public $lastName;
-    public $firstName;
-    //'1970-02-01'
-    public $birthDate;
+use App\Services\ToDoList as ToDoListService;
 
-    public function __construct($email, $lastName, $firstName, $birthDate)
+class User {
+    private $email;
+    private $lastName;
+    private $firstName;
+    //'1970-02-01'
+    private $birthDate;
+    private $password;
+    private $ToDoList;
+
+
+    public function __construct(?string $email, ?string $lastName, ?string $firstName, ?string $birthDate,
+                                ?string $password, ToDoListService $ToDoList)
     {
         $this->email = $email;
         $this->lastName = $lastName;
         $this->firstName = $firstName;
         $this->birthDate = $birthDate;
+        $this->password = $password;
+        $this->ToDoList = $ToDoList;
     }
 
     public function isValid()
     {
-        return $this->checkEmail() && $this->checkName() && $this->checkDateNaissance() && $this->checkPrenom();
+        return $this->checkEmail() && $this->checkName() && $this->checkDateNaissance() && $this->checkPrenom() &&
+            $this->checkPassword();
     }
 
     private function checkEmail()
@@ -41,5 +50,10 @@ class User {
     private function checkPrenom()
     {
         return isset($this->firstName) && $this->firstName !== "";
+    }
+
+    private function checkPassword()
+    {
+        return isset($this->password) && $this->password !== "" && strlen($this->password) >= 3 && strlen($this->password) <= 40 ;
     }
 }
