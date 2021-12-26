@@ -22,7 +22,7 @@ class UserTest extends TestCase {
             "Louis",
             date("Y-m-d", strtotime('-13 years')),
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertTrue($user->isValid());
     }
@@ -35,7 +35,7 @@ class UserTest extends TestCase {
             "Louis",
             "2000-05-21",
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }
@@ -48,7 +48,7 @@ class UserTest extends TestCase {
             "Louis",
             "2000-05-21",
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }
@@ -61,7 +61,7 @@ class UserTest extends TestCase {
             null,
             "2000-05-21",
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }
@@ -74,7 +74,7 @@ class UserTest extends TestCase {
             "Louis",
             "2018-05-21",
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }
@@ -87,7 +87,7 @@ class UserTest extends TestCase {
             "Louis",
             "2000-05-21",
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }
@@ -100,7 +100,7 @@ class UserTest extends TestCase {
             "Louis",
             null,
             "azerty",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }
@@ -113,7 +113,7 @@ class UserTest extends TestCase {
             "Louis",
             date("Y-m-d", strtotime('-13 years')),
             "",
-            new ToDoListService(new ToDoListEntity(), new ArrayUtils())
+            new ToDoListService(new ArrayUtils())
         );
         $this->assertFalse($user->isValid());
     }

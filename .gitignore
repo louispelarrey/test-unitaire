@@ -7,4 +7,3 @@
 /vendor/
 .idea
 .phpunit.result.cache
-/docker/db

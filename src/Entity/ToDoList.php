@@ -8,7 +8,7 @@ class ToDoList
 
     public function getItems(): array
     {
-        return $this->toDoListEntity->items;
+        return $this->items;
     }
 
     /**
