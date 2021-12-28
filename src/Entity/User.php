@@ -54,6 +54,6 @@ class User {
 
     private function checkPassword()
     {
-        return isset($this->password) && $this->password !== "" && strlen($this->password) >= 3 && strlen($this->password) <= 40 ;
+        return isset($this->password) && $this->password !== "" && strlen($this->password) >= 8 && strlen($this->password) <= 40 ;
     }
 }

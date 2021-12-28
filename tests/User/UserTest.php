@@ -4,7 +4,6 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use App\Entity\User;
 use App\Services\ToDoList as ToDoListService;
-use App\Entity\ToDoList as ToDoListEntity;
 use App\Services\ArrayUtils;
 
 class UserTest extends TestCase {
@@ -40,7 +39,7 @@ class UserTest extends TestCase {
         $this->assertFalse($user->isValid());
     }
 
-    public function testIsNotValidWithNullName()
+    public function testIsNotValidWithNullLastName()
     {
         $user = new User(
             "louispelarrey@gmail.com",
@@ -53,7 +52,7 @@ class UserTest extends TestCase {
         $this->assertFalse($user->isValid());
     }
 
-    public function testIsNotValidWithNullSurname()
+    public function testIsNotValidWithNullFirstName()
     {
         $user = new User(
             "louispelarrey@gmail.com",
@@ -79,7 +78,7 @@ class UserTest extends TestCase {
         $this->assertFalse($user->isValid());
     }
 
-    public function testIsNotValidWithNullButStringName()
+    public function testIsNotValidWithNoLastName()
     {
         $user = new User(
             "louispelarrey@gmail.com",
@@ -105,7 +104,7 @@ class UserTest extends TestCase {
         $this->assertFalse($user->isValid());
     }
 
-    public function testIsNotWorkingWithNothingPassword()
+    public function testIsNotWorkingWithNoPassword()
     {
         $user = new User(
             "louispelarrey@gmail.com",

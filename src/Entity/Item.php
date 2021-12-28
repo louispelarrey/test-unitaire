@@ -17,6 +17,16 @@ class Item
         $this->dateCreation = new DateTime();
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
     public function getDateCreation(): DateTime
     {
         return $this->dateCreation;

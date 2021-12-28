@@ -33,12 +33,11 @@ class ToDoListController extends AbstractController{
     {
         try {
             $params = $request->query->all();
-            for($i=0; $i<count($params["name"]); $i++){
+            for ($i = 0; $i < count($params["name"]); $i++) {
                 $item = new Item(
                     $params["name"][$i],
                     $params["content"][$i]
                 );
-
                 $this->toDoListService->add($item);
             }
             return new JsonResponse($this->toDoListService->getItems());

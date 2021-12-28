@@ -8,10 +8,14 @@ class ToDoListTest extends WebTestCase
 {
     public function testReturnsValidJsonOnAdd()
     {
+
         $client = static::createClient();
         $client->request('GET', '/todolist/add?name[0]=Faire+la+vaisselle&content[0]=5mn+a+froid');
         $response = $client->getResponse();
-        $this->assertJsonStringEqualsJsonString(json_encode(["name" => "Faire la vaisselle", "content" => "5mn à froid"]), $response);
+
+        $jsonBody = json_encode(["name" => "Faire la vaisselle", "content" => "5mn à froid"]);
+        var_dump($jsonBody);
+        $this->assertJsonStringEqualsJsonString($jsonBody, $response);
     }
 
     /**
