@@ -7,12 +7,10 @@ use App\Entity\ToDoList as ToDoListEntity;
 
 class ToDoList
 {
-    private ArrayUtils $arrayUtils;
     private ToDoListEntity $toDoListEntity;
 
-    public function __construct(ArrayUtils $arrayUtils)
+    public function __construct()
     {
-        $this->arrayUtils = $arrayUtils;
         $this->toDoListEntity = new ToDoListEntity();
     }
 
@@ -24,56 +22,28 @@ class ToDoList
         return $this->toDoListEntity->getItems();
     }
 
+    private function toDoListLength(): int
+    {
+        return count($this->toDoListEntity->items);
+    }
+
     /**
      * Ajoute un Item dans la todolist
      */
     public function add(?Item $item): void
     {
-        $this->toDoListEntity->add($item);
-        if (!$this->checkItemsOnAdd($item)) {
-            $this->toDoListEntity->deleteLast();
+        if ($this->checkItemOnAdd($item)) {
+            $this->toDoListEntity->add($item);
         }
-    }
-
-    /**
-     * Vérifie qu'il n'y a pas de duplicat de l'objet
-     */
-    public function checkUniqueNameOnAdd(): bool
-    {
-        $names = $this->getNamesOfItems($this->toDoListEntity->items);
-        return $this->arrayUtils->checkUniqueNameItem($names);
-    }
-
-    /**
-     * Vérifie que le nombre maximum de lettres dans le content n'excède pas 1000
-     */
-    public function checkMaxCharacters(Item $item): bool
-    {
-        return $item->content <= 1000;
     }
 
     /**
      * Vérifie les Items et leur contenus lors de la demande d'ajout
      */
-    private function checkItemsOnAdd(): bool
+    private function checkItemOnAdd($item): bool
     {
-        return $this->verifyLastItemDate() && $this->checkLessOrEqualTenItems() &&
-            $this->checkUniqueNameOnAdd();
-    }
-
-    /**
-     * Vérifie la date du dernier Item inséré
-     */
-    private function verifyLastItemDate(): bool
-    {
-        $toDoListLength = count($this->toDoListEntity->items);
-        if ($toDoListLength > 1) {
-            $previousItem = $this->toDoListEntity->items[$toDoListLength - 2];
-            $lastItem = $this->toDoListEntity->items[$toDoListLength - 1];
-            $diffByMin = (strtotime($lastItem->dateCreation) - strtotime($previousItem->dateCreation)) / 60;
-            return $diffByMin >= 30;
-        }
-        return true;
+        return  $this->checkLessOrEqualTenItems() && $this->checkUniqueNameOnAdd($item) &&
+            $this->checkLastItemDate($item) && $this->checkMaxCharacters($item);
     }
 
     /**
@@ -81,19 +51,43 @@ class ToDoList
      */
     private function checkLessOrEqualTenItems(): bool
     {
-        return count($this->toDoListEntity->items) <= 10;
+        return $this->toDoListLength() <= 10;
     }
 
     /**
-     * Récupère les noms des items
+     * Vérifie qu'il n'y a pas de duplicat de l'objet
      */
-    private function getNamesOfItems(array $items): array
+    private function checkUniqueNameOnAdd(?Item $item): bool
     {
-        $names = null;
-        foreach ($items as $item) {
-            $names[] = $item->name;
+        if ($this->toDoListLength() > 0)
+        {
+            foreach ($this->toDoListEntity->items as $singleItem) {
+                if ($singleItem->name == $item->name)
+                    return false;
+            }
         }
+        return true;
+    }
 
-        return $names;
+    /**
+     * Vérifie la date du dernier Item inséré
+     */
+    private function checkLastItemDate(?Item $item): bool
+    {
+        if ($this->toDoListLength() >= 1) {
+            $previousItem = $this->toDoListEntity->items[$this->toDoListLength() - 1];
+            $diffByMin = (strtotime($item->dateCreation) - strtotime($previousItem->dateCreation)) / 60;
+            return $diffByMin >= 30;
+        }
+        return true;
+    }
+
+    /**
+     * Vérifie que le nombre maximum de lettres dans le content n'excède pas 1000
+     */
+    public function checkMaxCharacters(Item $item): bool
+    {
+        return strlen($item->content) <= 1000;
     }
 }
+

@@ -41,7 +41,7 @@ class ToDoListController extends AbstractController{
                 );
                 $this->toDoListService->add($item);
             }
-            return new JsonResponse($this->toDoListService->getItems());
+           return new JsonResponse($this->toDoListService->getItems());
         } catch (Exception $e) {
             return new JsonResponse([
                 "error" => "Votre item n'a pas pu être ajouté à la ToDoList"
