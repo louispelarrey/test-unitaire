@@ -4,10 +4,9 @@ namespace App\Services;
 
 use App\Entity\Item;
 use App\Entity\ToDoList as ToDoListEntity;
-use Exception;
-use Symfony\Component\HttpFoundation\Request;
 
-class ToDoList {
+class ToDoList
+{
     private ArrayUtils $arrayUtils;
     private ToDoListEntity $toDoListEntity;
 
@@ -28,28 +27,21 @@ class ToDoList {
     /**
      * Ajoute un Item dans la todolist
      */
-    public function add(?Item $item): bool
+    public function add(?Item $item): void
     {
-        if($this->checkItemsOnAdd($item)) {
-            $this->toDoListEntity->add($item);
-            return true;
+        $this->toDoListEntity->add($item);
+        if (!$this->checkItemsOnAdd($item)) {
+            $this->toDoListEntity->deleteLast();
         }
-
-        return false;
     }
 
     /**
      * Vérifie qu'il n'y a pas de duplicat de l'objet
      */
-    public function checkUniqueNameOnAdd(?array $items, ?Item $item): bool
+    public function checkUniqueNameOnAdd(): bool
     {
-        if($items !== null) {
-            $names = $this->makeTableOfNamesWithItems($items);
-            $names[] = $item->name;
-            return $this->arrayUtils->checkUniqueNameItem($names);
-        }
-
-        return true;
+        $names = $this->getNamesOfItems($this->toDoListEntity->items);
+        return $this->arrayUtils->checkUniqueNameItem($names);
     }
 
     /**
@@ -63,10 +55,10 @@ class ToDoList {
     /**
      * Vérifie les Items et leur contenus lors de la demande d'ajout
      */
-    private function checkItemsOnAdd(?Item $item): bool
+    private function checkItemsOnAdd(): bool
     {
         return $this->verifyLastItemDate() && $this->checkLessOrEqualTenItems() &&
-            $this->checkUniqueNameOnAdd($this->toDoListEntity->items, $item);
+            $this->checkUniqueNameOnAdd();
     }
 
     /**
@@ -74,15 +66,13 @@ class ToDoList {
      */
     private function verifyLastItemDate(): bool
     {
-        if($this->toDoListEntity->items !== null){
-            $itemsLength = count($this->toDoListEntity->items)-1;
-
-            $lastItem = $this->toDoListEntity->items[$itemsLength];
-            $now = new \DateTime();
-            return true;//$lastItem->dateCreation > $now->modify('-30 minutes');
-            //TODO: REMETTRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        $toDoListLength = count($this->toDoListEntity->items);
+        if ($toDoListLength > 1) {
+            $previousItem = $this->toDoListEntity->items[$toDoListLength - 2];
+            $lastItem = $this->toDoListEntity->items[$toDoListLength - 1];
+            $diffByMin = (strtotime($lastItem->dateCreation) - strtotime($previousItem->dateCreation)) / 60;
+            return $diffByMin >= 30;
         }
-
         return true;
     }
 
@@ -91,16 +81,16 @@ class ToDoList {
      */
     private function checkLessOrEqualTenItems(): bool
     {
-        return $this->toDoListEntity->items === null ? true : count($this->toDoListEntity->items) <= 10;
+        return count($this->toDoListEntity->items) <= 10;
     }
-    
+
     /**
-     * Créé un tableau de noms à partir d'Item
+     * Récupère les noms des items
      */
-    private function makeTableOfNamesWithItems(array $items): array
+    private function getNamesOfItems(array $items): array
     {
         $names = null;
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $names[] = $item->name;
         }
 

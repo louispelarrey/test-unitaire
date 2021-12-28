@@ -8,7 +8,6 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/todolist', name: 'todolist_')]
@@ -27,6 +26,7 @@ class ToDoListController extends AbstractController{
      * Accessible via /todolist/add?name[0]=X&content[0]=X&name[1]=XY&content[1]=XY
      * @param GET name
      * @param GET content
+     * @param GET dateCreation
      */
     #[Route('/add', name: 'create', methods: ['GET', 'POST'])]
     public function add(Request $request): JsonResponse
@@ -36,7 +36,8 @@ class ToDoListController extends AbstractController{
             for ($i = 0; $i < count($params["name"]); $i++) {
                 $item = new Item(
                     $params["name"][$i],
-                    $params["content"][$i]
+                    $params["content"][$i],
+                    $params["dateCreation"][$i]
                 );
                 $this->toDoListService->add($item);
             }
