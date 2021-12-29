@@ -31,4 +31,16 @@ class User {
     {
         return $this->entityUser;
     }
+
+    public function toArray(): array
+    {
+        return [
+            "email" => $this->entityUser->getEmail(),
+            "lastname" => $this->entityUser->getLastName(),
+            "firstname" => $this->entityUser->getFirstName(),
+            "birthdate" => $this->entityUser->getBirthDate(),
+            "password" => $this->entityUser->getPassword(),
+            "toDoList" => $this->entityUser->getToDoList()->getItems()
+        ];
+    }
 }
