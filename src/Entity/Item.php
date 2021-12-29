@@ -8,13 +8,14 @@ class Item
 {
     public ?string $name;
     public ?string $content;
-    private DateTime $dateCreation;
+    public ?string $dateCreation;
 
-    public function __construct(?string $name, ?string $content)
+    public function __construct(?string $name, ?string $content, ?string $dateCreation)
     {
         $this->name = $name;
         $this->content = $content;
-        $this->dateCreation = new DateTime();
+        $date = new DateTime("$dateCreation");
+        $this->dateCreation = $date->format('Y-m-d H:i:s');;
     }
 
     public function getName(): string

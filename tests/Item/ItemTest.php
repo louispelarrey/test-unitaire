@@ -15,10 +15,9 @@ class ItemTest extends TestCase {
     {
         $item = new Item(
             "Test",
-            "Random content"
+            "Random content",
         );
         $todayTimestamp = strtotime("now");
         $this->assertEquals($todayTimestamp, $item->getDateCreation()->getTimestamp());
     }
-
 }

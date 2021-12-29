@@ -4,16 +4,13 @@ namespace App\Services;
 
 use App\Entity\Item;
 use App\Entity\ToDoList as ToDoListEntity;
-use Exception;
-use Symfony\Component\HttpFoundation\Request;
 
-class ToDoList {
-    private ArrayUtils $arrayUtils;
+class ToDoList
+{
     private ToDoListEntity $toDoListEntity;
 
-    public function __construct(ArrayUtils $arrayUtils)
+    public function __construct()
     {
-        $this->arrayUtils = $arrayUtils;
         $this->toDoListEntity = new ToDoListEntity();
     }
 
@@ -25,30 +22,63 @@ class ToDoList {
         return $this->toDoListEntity->getItems();
     }
 
+    private function toDoListLength(): int
+    {
+        return count($this->toDoListEntity->items);
+    }
+
     /**
      * Ajoute un Item dans la todolist
      */
-    public function add(?Item $item): bool
+    public function add(?Item $item): void
     {
-        if($this->checkItemsOnAdd($item)) {
+        if ($this->checkItemOnAdd($item)) {
             $this->toDoListEntity->add($item);
-            return true;
         }
+    }
 
-        return false;
+    /**
+     * Vérifie les Items et leur contenus lors de la demande d'ajout
+     */
+    private function checkItemOnAdd($item): bool
+    {
+        return  $this->checkLessOrEqualTenItems() && $this->checkUniqueNameOnAdd($item) &&
+            $this->checkLastItemDate($item) && $this->checkMaxCharacters($item);
+    }
+
+    /**
+     * Vérifie qu'il y a 10 ou moins Items dans la toDoList
+     */
+    private function checkLessOrEqualTenItems(): bool
+    {
+        return $this->toDoListLength() <= 10;
     }
 
     /**
      * Vérifie qu'il n'y a pas de duplicat de l'objet
      */
-    public function checkUniqueNameOnAdd(?array $items, ?Item $item): bool
+    private function checkUniqueNameOnAdd(?Item $item): bool
     {
-        if($items !== null) {
-            $names = $this->makeTableOfNamesWithItems($items);
-            $names[] = $item->name;
-            return $this->arrayUtils->checkUniqueNameItem($names);
+        if ($this->toDoListLength() > 0)
+        {
+            foreach ($this->toDoListEntity->items as $singleItem) {
+                if ($singleItem->name == $item->name)
+                    return false;
+            }
         }
+        return true;
+    }
 
+    /**
+     * Vérifie la date du dernier Item inséré
+     */
+    private function checkLastItemDate(?Item $item): bool
+    {
+        if ($this->toDoListLength() >= 1) {
+            $previousItem = $this->toDoListEntity->items[$this->toDoListLength() - 1];
+            $diffByMin = (strtotime($item->dateCreation) - strtotime($previousItem->dateCreation)) / 60;
+            return $diffByMin >= 30;
+        }
         return true;
     }
 
@@ -57,53 +87,7 @@ class ToDoList {
      */
     public function checkMaxCharacters(Item $item): bool
     {
-        return $item->content <= 1000;
-    }
-
-    /**
-     * Vérifie les Items et leur contenus lors de la demande d'ajout
-     */
-    private function checkItemsOnAdd(?Item $item): bool
-    {
-        return $this->verifyLastItemDate() && $this->checkLessOrEqualTenItems() &&
-            $this->checkUniqueNameOnAdd($this->toDoListEntity->items, $item);
-    }
-
-    /**
-     * Vérifie la date du dernier Item inséré
-     */
-    private function verifyLastItemDate(): bool
-    {
-        if($this->toDoListEntity->items !== null){
-            $itemsLength = count($this->toDoListEntity->items)-1;
-
-            $lastItem = $this->toDoListEntity->items[$itemsLength];
-            $now = new \DateTime();
-            return true;//$lastItem->dateCreation > $now->modify('-30 minutes');
-            //TODO: REMETTRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        }
-
-        return true;
-    }
-
-    /**
-     * Vérifie qu'il y a 10 ou moins Items dans la toDoList
-     */
-    private function checkLessOrEqualTenItems(): bool
-    {
-        return $this->toDoListEntity->items === null ? true : count($this->toDoListEntity->items) <= 10;
-    }
-    
-    /**
-     * Créé un tableau de noms à partir d'Item
-     */
-    private function makeTableOfNamesWithItems(array $items): array
-    {
-        $names = null;
-        foreach($items as $item) {
-            $names[] = $item->name;
-        }
-
-        return $names;
+        return strlen($item->content) <= 1000;
     }
 }
+
