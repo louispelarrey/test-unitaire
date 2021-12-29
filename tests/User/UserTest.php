@@ -2,7 +2,7 @@
 
 use App\Services\ToDoList;
 use App\Services\User;
-use App\Services\Checker\User as CheckerUser;
+use App\Services\Checkers\User as CheckerUser;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase {

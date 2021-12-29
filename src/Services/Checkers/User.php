@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Services\Checker;
+namespace App\Services\Checkers;
 
 use App\Entity\User as UserEntity;
 
