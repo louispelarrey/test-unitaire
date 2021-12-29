@@ -22,11 +22,6 @@ class ToDoList
         return $this->toDoListEntity->getItems();
     }
 
-    private function toDoListLength(): int
-    {
-        return count($this->toDoListEntity->items);
-    }
-
     /**
      * Ajoute un Item dans la todolist
      */
@@ -37,10 +32,15 @@ class ToDoList
         }
     }
 
+    private function toDoListLength(): int
+    {
+        return count($this->toDoListEntity->items);
+    }
+
     /**
      * Vérifie les Items et leur contenus lors de la demande d'ajout
      */
-    private function checkItemOnAdd($item): bool
+    private function checkItemOnAdd(Item $item): bool
     {
         return  $this->checkLessOrEqualTenItems() && $this->checkUniqueNameOnAdd($item) &&
             $this->checkLastItemDate($item) && $this->checkMaxCharacters($item);
@@ -85,7 +85,7 @@ class ToDoList
     /**
      * Vérifie que le nombre maximum de lettres dans le content n'excède pas 1000
      */
-    public function checkMaxCharacters(Item $item): bool
+    private function checkMaxCharacters(Item $item): bool
     {
         return strlen($item->content) <= 1000;
     }

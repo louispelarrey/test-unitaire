@@ -20,13 +20,14 @@ class ToDoListTest extends WebTestCase
      */
     public function testReturnsValidJsonOnAddViaRoute()
     {        
-        $this->client->request("GET", "/todolist/add?name[0]=Faire+la+vaisselle&content[0]=5mn+a+froid");
+        $this->client->request("GET", "/todolist/add?name[0]=Faire+la+vaisselle&content[0]=5mn+a+froid&dateCreation[0]=2020-10-12");
         $data = $this->client->getResponse()->getContent();
 
         $expectedJson = json_encode([
             0 => [
                 "name" => "Faire la vaisselle",
-                "content" => "5mn a froid"
+                "content" => "5mn a froid",
+                "dateCreation" => "2020-10-12 00:00:00"
             ]
         ]);
 
@@ -38,7 +39,7 @@ class ToDoListTest extends WebTestCase
      */
     public function testReturnsErrorMessageOnAddViaRouteWithBadParam()
     {
-        $this->client->request('GET', '/todolist/add?name[0]=Faire+la+vaisselle&badParam[0]=5mn+a+froid');
+        $this->client->request('GET', '/todolist/add?name[0]=Faire+la+vaisselle&badParam[0]=5mn+a+froid&dateCreation[0]=2020-10-12');
         $data = $this->client->getResponse()->getContent();
 
         $expectedJson = json_encode([
@@ -56,21 +57,24 @@ class ToDoListTest extends WebTestCase
         $this->client->request('GET', '/todolist/add?' . 
             'name[0]=Faire+la+vaisselle'.
             '&content[0]=5mn+a+froid'.
+            '&dateCreation[0]=2020-10-12 00:00:00'.
+
             '&name[1]=Faire+la+vaisselle'.
-            '&content[1]=Description+differente'
+            '&content[1]=Description+differente'.
+            '&dateCreation[1]=2020-10-12'
         );
         $data = $this->client->getResponse()->getContent();
 
         $expectedJson = json_encode([
             0 => [
                 "name" => "Faire la vaisselle",
-                "content" => "5mn a froid"
+                "content" => "5mn a froid",
+                "dateCreation" => "2020-10-12 00:00:00"
             ]
         ]);
 
         $this->assertJsonStringEqualsJsonString($expectedJson, $data);
     }
-
 
     /**
      * Vérifie que l'API retourne un Item dans la todolist lorsque l'on utilise le même name pour deux items
@@ -80,15 +84,12 @@ class ToDoListTest extends WebTestCase
         $thousandAndOneCharacterString = $this->generateRandomString();
         $this->client->request('GET', '/todolist/add?' . 
             "name[0]=Faire+la+vaisselle".
-            "&content[0]={$thousandAndOneCharacterString}"
+            "&content[0]={$thousandAndOneCharacterString}".
+            '&dateCreation[0]=2020-10-12 00:00:00'
         );
         $data = $this->client->getResponse()->getContent();
 
         $expectedJson = json_encode([
-            0 => [
-                "name" => "Faire la vaisselle",
-                "content" => $thousandAndOneCharacterString
-            ]
         ]);
 
         $this->assertJsonStringEqualsJsonString($expectedJson, $data);

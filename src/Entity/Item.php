@@ -28,7 +28,7 @@ class Item
         return $this->content;
     }
 
-    public function getDateCreation(): DateTime
+    public function getDateCreation(): string
     {
         return $this->dateCreation;
     }

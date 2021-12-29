@@ -10,14 +10,4 @@ class ItemTest extends TestCase {
     {
         parent::setUp();
     }
-
-    public function testDateCreationIsValid()
-    {
-        $item = new Item(
-            "Test",
-            "Random content",
-        );
-        $todayTimestamp = strtotime("now");
-        $this->assertEquals($todayTimestamp, $item->getDateCreation()->getTimestamp());
-    }
 }
