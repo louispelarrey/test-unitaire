@@ -1,0 +1,18 @@
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="true">
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </coverage>
+    <testsuites>
+        <testsuite name="all">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <server name="KERNEL_CLASS" value="App\Kernel" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="/foobar/"/>
+        <env name="APP_ENV" value="test" force="true"/>
+    </php>
+</phpunit>
