@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+Use App\Entity\Item;
+use App\Services\EmailSenderService;
 use App\Services\ToDoList;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -9,11 +11,18 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class ToDoListTest extends WebTestCase
 {
     private KernelBrowser $client;
+    private EmailSenderService $emailSenderService;
 
     public function setUp(): void
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
+
+        $this->emailSenderService = $this->getMockBuilder(EmailSenderService::class)
+            ->onlyMethods(['sendEmail'])
+            ->getMock();
+
+        parent::setUp();
     }
 
     /**
@@ -94,6 +103,46 @@ class ToDoListTest extends WebTestCase
         ]);
 
         $this->assertJsonStringEqualsJsonString($expectedJson, $data);
+    }
+
+    /**
+     *  Vérifie que l'API envoie un mail à l'utilisateur lorsque le 8ème item est ajouté
+     */
+    public function testSendMailWhenAddingEighthItem()
+    {
+        $toDoListService = new ToDoList();
+        for ($i = 0; $i < 8; $i++) {
+            $item = new Item(
+                $i, $i,
+                "202$i-01-01"
+            );
+            $toDoListService->add($item);
+        }
+        $this->emailSenderService->expects($this->any())
+            ->method('sendEmail')
+            ->willReturn(true);
+
+        $this->assertTrue($toDoListService->checkEighthAdd($this->emailSenderService));
+    }
+
+    /**
+     *  Vérifie que l'API n'envoie pas de mail à l'utilisateur lorsque le 7ème item est ajouté
+     */
+    public function testSendMailWhenAddingSeventhItem()
+    {
+        $toDoListService = new ToDoList($this->emailSenderService);
+        for ($i = 0; $i < 7; $i++) {
+            $item = new Item(
+                $i, $i,
+                "202$i-01-01"
+            );
+            $toDoListService->add($item);
+        }
+        $this->emailSenderService->expects($this->any())
+            ->method('sendEmail')
+            ->willReturn(true);
+
+        $this->assertFalse($toDoListService->checkEighthAdd($this->emailSenderService));
     }
 
     /**
