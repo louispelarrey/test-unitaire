@@ -74,22 +74,37 @@ class ToDoListTest extends WebTestCase
 
     /**
      * Vérifie que l'API retourne un Item dans la todolist lorsque l'on utilise le même name pour deux items
-     */
+     */ 
     public function testNotWorkingWithLongerThan1000CharactersContent()
     {
+        $thousandAndOneCharacterString = $this->generateRandomString();
         $this->client->request('GET', '/todolist/add?' . 
-            'name[0]=Faire+la+vaisselle'.
-            '&content[0]=5mn+a+froid'
+            "name[0]=Faire+la+vaisselle".
+            "&content[0]={$thousandAndOneCharacterString}"
         );
         $data = $this->client->getResponse()->getContent();
 
         $expectedJson = json_encode([
             0 => [
                 "name" => "Faire la vaisselle",
-                "content" => "5mn a froid"
+                "content" => $thousandAndOneCharacterString
             ]
         ]);
 
         $this->assertJsonStringEqualsJsonString($expectedJson, $data);
+    }
+
+    /**
+     * Génère une string random pour les tests
+     */
+    private function generateRandomString(int $length = 1001): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
