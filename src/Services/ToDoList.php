@@ -47,6 +47,17 @@ class ToDoList
     }
 
     /**
+     * Vérifie
+     */
+    public function checkEighthAdd(EmailSenderService $emailSenderService): bool
+    {
+        if ($this->toDoListLength() == 8) {
+            return $emailSenderService->sendEmail("unEmail");
+        }
+        return false;
+    }
+
+    /**
      * Vérifie qu'il y a 10 ou moins Items dans la toDoList
      */
     private function checkLessOrEqualTenItems(): bool
