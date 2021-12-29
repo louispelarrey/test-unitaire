@@ -1,15 +1,11 @@
 <?php
 
+use App\Services\ToDoList;
+use App\Services\User;
+use App\Services\Checker\User as CheckerUser;
 use PHPUnit\Framework\TestCase;
-use App\Entity\User;
-use App\Services\ToDoList as ToDoListService;
 
 class UserTest extends TestCase {
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
     public function testIsValidWithGoodInfos()
     {
@@ -18,10 +14,11 @@ class UserTest extends TestCase {
             "Pelarrey",
             "Louis",
             date("Y-m-d", strtotime('-13 years')),
-            "azerty",
-            new ToDoListService()
+            "azertyuiop",
+            new ToDoList()
         );
-        $this->assertTrue($user->isValid());
+
+        $this->assertTrue(CheckerUser::isValid($user->getEntity()));
     }
 
     public function testIsNotValidWithBadEmail()
@@ -30,50 +27,12 @@ class UserTest extends TestCase {
             "uuu",
             "Pelarrey",
             "Louis",
-            "2000-05-21",
-            "azerty",
-            new ToDoListService()
+            date("Y-m-d", strtotime('-13 years')),
+            "azertyuiop",
+            new ToDoList()
         );
-        $this->assertFalse($user->isValid());
-    }
 
-    public function testIsNotValidWithNullLastName()
-    {
-        $user = new User(
-            "louispelarrey@gmail.com",
-            null,
-            "Louis",
-            "2000-05-21",
-            "azerty",
-            new ToDoListService()
-        );
-        $this->assertFalse($user->isValid());
-    }
-
-    public function testIsNotValidWithNullFirstName()
-    {
-        $user = new User(
-            "louispelarrey@gmail.com",
-            "Pelarrey",
-            null,
-            "2000-05-21",
-            "azerty",
-            new ToDoListService()
-        );
-        $this->assertFalse($user->isValid());
-    }
-
-    public function testIsNotValidWithUnderage()
-    {
-        $user = new User(
-            "louispelarrey@gmail.com",
-            "Pelarrey",
-            "Louis",
-            "2018-05-21",
-            "azerty",
-            new ToDoListService()
-        );
-        $this->assertFalse($user->isValid());
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
     }
 
     public function testIsNotValidWithNoLastName()
@@ -82,24 +41,54 @@ class UserTest extends TestCase {
             "louispelarrey@gmail.com",
             "",
             "Louis",
-            "2000-05-21",
-            "azerty",
-            new ToDoListService()
+            date("Y-m-d", strtotime('-13 years')),
+            "azertyuiop",
+            new ToDoList()
         );
-        $this->assertFalse($user->isValid());
+
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
     }
 
-    public function testIsWorkingWithNullBirthDate()
+    public function testIsNotValidWithNoFirstName()
+    {
+        $user = new User(
+            "louispelarrey@gmail.com",
+            "Pelarrey",
+            "",
+            date("Y-m-d", strtotime('-13 years')),
+            "azertyuiop",
+            new ToDoList()
+        );
+
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
+    }
+
+    public function testIsNotValidWithUnder13()
     {
         $user = new User(
             "louispelarrey@gmail.com",
             "Pelarrey",
             "Louis",
-            null,
-            "azerty",
-            new ToDoListService()
+            date("Y-m-d", strtotime('-12 years')),
+            "azertyuiop",
+            new ToDoList()
         );
-        $this->assertFalse($user->isValid());
+
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
+    }
+
+    public function testIsNotWorkingWithNoBirthDate()
+    {
+        $user = new User(
+            "louispelarrey@gmail.com",
+            "Pelarrey",
+            "Louis",
+            "",
+            "azertyuiop",
+            new ToDoList()
+        );
+
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
     }
 
     public function testIsNotWorkingWithNoPassword()
@@ -110,8 +99,23 @@ class UserTest extends TestCase {
             "Louis",
             date("Y-m-d", strtotime('-13 years')),
             "",
-            new ToDoListService()
+            new ToDoList()
         );
-        $this->assertFalse($user->isValid());
+
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
+    }
+
+    public function testIsNotWorkingWith3CharactersPassword()
+    {
+        $user = new User(
+            "louispelarrey@gmail.com",
+            "Pelarrey",
+            "Louis",
+            date("Y-m-d", strtotime('-13 years')),
+            "aze",
+            new ToDoList()
+        );
+
+        $this->assertFalse(CheckerUser::isValid($user->getEntity()));
     }
 }

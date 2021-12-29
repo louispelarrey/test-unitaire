@@ -4,7 +4,7 @@ namespace App\Entity;
 
 class ToDoList
 {
-    public array $items= [];
+    public array $items = [];
 
     public function getItems(): array
     {

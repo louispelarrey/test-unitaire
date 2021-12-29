@@ -2,58 +2,80 @@
 
 namespace App\Entity;
 
-use App\Services\ToDoList as ToDoListService;
+use App\Services\ToDoList;
 
 class User {
-    private $email;
-    private $lastName;
-    private $firstName;
-    //'1970-02-01'
-    private $birthDate;
-    private $password;
-    private $ToDoList;
 
+    private string $email;
+    private string $lastName;
+    private string $firstName;
+    private string $birthDate;
+    private string $password;
+    private ?ToDoList $toDoList;
 
-    public function __construct(?string $email, ?string $lastName, ?string $firstName, ?string $birthDate,
-                                ?string $password, ToDoListService $ToDoList)
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): User
     {
         $this->email = $email;
+        return $this;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): User
+    {
         $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): User
+    {
         $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getBirthDate(): string
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(string $birthDate): User
+    {
         $this->birthDate = $birthDate;
+        return $this;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): User
+    {
         $this->password = $password;
-        $this->ToDoList = $ToDoList;
+        return $this;
     }
 
-    public function isValid()
+    public function getToDoList(): ?ToDoList
     {
-        return $this->checkEmail() && $this->checkName() && $this->checkDateNaissance() && $this->checkPrenom() &&
-            $this->checkPassword();
+        return $this->toDoList;
     }
 
-    private function checkEmail()
+    public function setToDoList(ToDoList $toDoList): User
     {
-        return filter_var($this->email, FILTER_VALIDATE_EMAIL);
-    }
-
-    private function checkDateNaissance()
-    {
-        return isset($this->birthDate) ?
-            date_diff(date_create($this->birthDate), date_create('today'))->y >= 13 : null;
-    }
-
-    private function checkName()
-    {
-        return isset($this->lastName) && $this->lastName !== "";
-    }
-
-    private function checkPrenom()
-    {
-        return isset($this->firstName) && $this->firstName !== "";
-    }
-
-    private function checkPassword()
-    {
-        return isset($this->password) && $this->password !== "" && strlen($this->password) >= 8 && strlen($this->password) <= 40 ;
+        $this->toDoList = $toDoList;
+        return $this;
     }
 }
