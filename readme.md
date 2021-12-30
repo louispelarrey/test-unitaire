@@ -21,7 +21,7 @@ Louis Pelarrey
   
 ### Dependencies
 ```
-$ docker-compose -d --build
+$ docker-compose up -d --build
 ```
 
   
