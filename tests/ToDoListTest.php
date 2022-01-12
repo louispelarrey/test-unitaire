@@ -204,5 +204,4 @@ class ToDoListTest extends WebTestCase
         $todoList->add($item1);
         $this->assertEquals(count($todoList->getItems()), 0);
     }
-
 }
